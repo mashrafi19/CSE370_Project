@@ -31,7 +31,7 @@ Fumble is a dating-app-style platform for startup matchmaking. Connect with pote
 
 ## Tech Stack
 
-- **Backend**: Go
+- **Backend**: FastAPI (Python)
 - **Frontend**: Vite + React + shadcn/ui
 - **Database**: See `Normalized_Schema_Fumble.drawio.png` and `ER_EER_Diagram_project.drawio.png` for schema design
 
