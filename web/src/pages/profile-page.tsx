@@ -17,87 +17,14 @@ import {
   Logout01Icon,
   Cancel01Icon,
   Tick01Icon,
+  Delete01Icon,
+  Add01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
-
-interface ProfileData {
-  name: string
-  handle: string
-  avatar: string
-  location: string
-  website: string
-  bio: string
-  role: string
-  company: string
-  verified: boolean
-  stats: {
-    matches: number
-    connections: number
-    views: number
-  }
-  skills: string[]
-  education: {
-    school: string
-    degree: string
-    year: string
-  }
-  experience: {
-    role: string
-    company: string
-    period: string
-  }
-  social: {
-    linkedin?: string
-    github?: string
-    twitter?: string
-  }
-  achievements: string[]
-}
-
-const profileData: ProfileData = {
-  name: "Alex Rivera",
-  handle: "@arivera",
-  avatar: "",
-  location: "San Francisco, CA",
-  website: "alexsstartup.com",
-  bio: "Full-stack developer & entrepreneur passionate about building products that make a difference. Looking for a technical co-founder to join my journey.",
-  role: "Founder & CTO",
-  company: "Fumble",
-  verified: true,
-  stats: {
-    matches: 42,
-    connections: 156,
-    views: 1234,
-  },
-  skills: [
-    "React",
-    "TypeScript",
-    "Node.js",
-    "Python",
-    "AWS",
-    "Product Management",
-    "UI/UX Design",
-    "Machine Learning",
-  ],
-  education: {
-    school: "Stanford University",
-    degree: "M.S. Computer Science",
-    year: "2022",
-  },
-  experience: {
-    role: "Senior Software Engineer",
-    company: "Google",
-    period: "2020 - 2023",
-  },
-  social: {
-    linkedin: "linkedin.com/in/arivera",
-    github: "github.com/arivera",
-    twitter: "twitter.com/arivera",
-  },
-  achievements: ["Top Rated", "Y Combinator Alumni", "Forbes 30 Under 30"],
-}
+import type { User, UserUpdate, Education, SocialLinks } from "@/lib/api/client"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 function StatCard({
   label,
@@ -114,53 +41,277 @@ function StatCard({
   )
 }
 
-function SkillTag({ skill }: { skill: string }) {
+function SkillTag({ skill, onRemove }: { skill: string; onRemove?: () => void }) {
   return (
-    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
       {skill}
+      {onRemove && (
+        <button
+          onClick={onRemove}
+          className="ml-1 hover:text-destructive"
+          type="button"
+        >
+          <HugeiconsIcon icon={Delete01Icon} size={12} />
+        </button>
+      )}
     </span>
   )
 }
 
-function AchievementBadge({ achievement }: { achievement: string }) {
+function AchievementBadge({ achievement, onRemove }: { achievement: string; onRemove?: () => void }) {
   return (
-    <div className="flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-600">
+    <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-600">
       <HugeiconsIcon icon={Award02Icon} size={12} />
       <span>{achievement}</span>
+      {onRemove && (
+        <button
+          onClick={onRemove}
+          className="ml-1 hover:text-amber-800"
+          type="button"
+        >
+          <HugeiconsIcon icon={Delete01Icon} size={12} />
+        </button>
+      )}
+    </div>
+  )
+}
+
+function EditSkillsSection({
+  skills,
+  onChange,
+}: {
+  skills: string[]
+  onChange: (skills: string[]) => void
+}) {
+  const [newSkill, setNewSkill] = useState("")
+
+  const handleAdd = () => {
+    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
+      onChange([...skills, newSkill.trim()])
+      setNewSkill("")
+    }
+  }
+
+  const handleRemove = (skill: string) => {
+    onChange(skills.filter((s) => s !== skill))
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold">Skills</h3>
+      <div className="flex flex-wrap gap-2">
+        {skills.map((skill) => (
+          <SkillTag key={skill} skill={skill} onRemove={() => handleRemove(skill)} />
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newSkill}
+          onChange={(e) => setNewSkill(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAdd())}
+          placeholder="Add a skill"
+          className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+        />
+        <Button type="button" size="sm" onClick={handleAdd} disabled={!newSkill.trim()}>
+          <HugeiconsIcon icon={Add01Icon} size={16} />
+          Add
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function EditAchievementsSection({
+  achievements,
+  onChange,
+}: {
+  achievements: string[]
+  onChange: (achievements: string[]) => void
+}) {
+  const [newAchievement, setNewAchievement] = useState("")
+
+  const handleAdd = () => {
+    if (newAchievement.trim() && !achievements.includes(newAchievement.trim())) {
+      onChange([...achievements, newAchievement.trim()])
+      setNewAchievement("")
+    }
+  }
+
+  const handleRemove = (achievement: string) => {
+    onChange(achievements.filter((a) => a !== achievement))
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold">Achievements</h3>
+      <div className="flex flex-wrap gap-2">
+        {achievements.map((achievement) => (
+          <AchievementBadge key={achievement} achievement={achievement} onRemove={() => handleRemove(achievement)} />
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newAchievement}
+          onChange={(e) => setNewAchievement(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAdd())}
+          placeholder="Add an achievement"
+          className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+        />
+        <Button type="button" size="sm" onClick={handleAdd} disabled={!newAchievement.trim()}>
+          <HugeiconsIcon icon={Add01Icon} size={16} />
+          Add
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function EditEducationSection({
+  education,
+  onChange,
+}: {
+  education: Education | null
+  onChange: (education: Education) => void
+}) {
+  const [formData, setFormData] = useState<Education>(
+    education || { school: "", degree: "", year: "" }
+  )
+
+  const handleChange = (field: keyof Education, value: string) => {
+    const updated = { ...formData, [field]: value }
+    setFormData(updated)
+    onChange(updated)
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold">Education</h3>
+      <div className="space-y-3">
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            School
+          </label>
+          <input
+            type="text"
+            value={formData.school}
+            onChange={(e) => handleChange("school", e.target.value)}
+            placeholder="e.g. Stanford University"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            Degree
+          </label>
+          <input
+            type="text"
+            value={formData.degree}
+            onChange={(e) => handleChange("degree", e.target.value)}
+            placeholder="e.g. M.S. Computer Science"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            Year
+          </label>
+          <input
+            type="text"
+            value={formData.year}
+            onChange={(e) => handleChange("year", e.target.value)}
+            placeholder="e.g. 2022"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EditSocialLinksSection({
+  socialLinks,
+  onChange,
+}: {
+  socialLinks: SocialLinks | null
+  onChange: (socialLinks: SocialLinks) => void
+}) {
+  const [formData, setFormData] = useState<SocialLinks>(
+    socialLinks || { linkedin: "", github: "", twitter: "" }
+  )
+
+  const handleChange = (field: keyof SocialLinks, value: string) => {
+    const updated = { ...formData, [field]: value || undefined }
+    setFormData(updated)
+    onChange(updated)
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold">Social Links</h3>
+      <div className="space-y-3">
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            LinkedIn
+          </label>
+          <input
+            type="text"
+            value={formData.linkedin || ""}
+            onChange={(e) => handleChange("linkedin", e.target.value)}
+            placeholder="e.g. linkedin.com/in/username"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            GitHub
+          </label>
+          <input
+            type="text"
+            value={formData.github || ""}
+            onChange={(e) => handleChange("github", e.target.value)}
+            placeholder="e.g. github.com/username"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            Twitter
+          </label>
+          <input
+            type="text"
+            value={formData.twitter || ""}
+            onChange={(e) => handleChange("twitter", e.target.value)}
+            placeholder="e.g. twitter.com/username"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+          />
+        </div>
+      </div>
     </div>
   )
 }
 
 function EditProfileForm({
-  initialData,
+  user,
   onSave,
   onCancel,
 }: {
-  initialData: {
-    full_name: string | null
-    bio: string
-    location: string
-    website: string
-    role: string
-    company: string
-  }
-  onSave: (data: {
-    full_name?: string
-    bio?: string
-    location?: string
-    website?: string
-    role?: string
-    company?: string
-  }) => void
+  user: User
+  onSave: (data: UserUpdate) => void
   onCancel: () => void
 }) {
   const [formData, setFormData] = useState({
-    full_name: initialData.full_name || "",
-    bio: initialData.bio,
-    location: initialData.location,
-    website: initialData.website,
-    role: initialData.role,
-    company: initialData.company,
+    full_name: user.full_name || "",
+    bio: user.bio || "",
+    location: user.location || "",
+    website: user.website || "",
+    role: user.role || "",
+    company: user.company || "",
+    skills: user.skills || [],
+    achievements: user.achievements || [],
+    education: user.education,
+    social_links: user.social_links,
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -172,6 +323,10 @@ function EditProfileForm({
       website: formData.website,
       role: formData.role,
       company: formData.company,
+      skills: formData.skills,
+      achievements: formData.achievements,
+      education: formData.education || undefined,
+      social_links: formData.social_links || undefined,
     })
   }
 
@@ -180,92 +335,132 @@ function EditProfileForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-          Full Name
-        </label>
-        <input
-          type="text"
-          value={formData.full_name}
-          onChange={(e) =>
-            setFormData({ ...formData, full_name: e.target.value })
-          }
-          placeholder="Your full name"
-          className={inputClassName}
-        />
-      </div>
+      <Tabs defaultValue="basic" className="w-full">
+        <TabsList className="flex w-full justify-start overflow-x-auto px-2 scrollbar-hide">
+          <TabsTrigger value="basic" className="shrink-0 whitespace-nowrap px-3">Basic Info</TabsTrigger>
+          <TabsTrigger value="skills" className="shrink-0 whitespace-nowrap px-3">Skills</TabsTrigger>
+          <TabsTrigger value="achievements" className="shrink-0 whitespace-nowrap px-3">Achievements</TabsTrigger>
+          <TabsTrigger value="education" className="shrink-0 whitespace-nowrap px-3">Education</TabsTrigger>
+          <TabsTrigger value="social" className="shrink-0 whitespace-nowrap px-3">Social</TabsTrigger>
+        </TabsList>
 
-      <div>
-        <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-          Bio
-        </label>
-        <textarea
-          value={formData.bio}
-          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-          placeholder="Tell us about yourself"
-          rows={3}
-          className={`${inputClassName} resize-none`}
-        />
-      </div>
+        <TabsContent value="basic" className="space-y-4 pt-4">
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={formData.full_name}
+              onChange={(e) =>
+                setFormData({ ...formData, full_name: e.target.value })
+              }
+              placeholder="Your full name"
+              className={inputClassName}
+            />
+          </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-            Role
-          </label>
-          <input
-            type="text"
-            value={formData.role}
-            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-            placeholder="e.g. Founder"
-            className={inputClassName}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+              Bio
+            </label>
+            <textarea
+              value={formData.bio}
+              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              placeholder="Tell us about yourself"
+              rows={3}
+              className={`${inputClassName} resize-none`}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Role
+              </label>
+              <input
+                type="text"
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                placeholder="e.g. Founder"
+                className={inputClassName}
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Company
+              </label>
+              <input
+                type="text"
+                value={formData.company}
+                onChange={(e) =>
+                  setFormData({ ...formData, company: e.target.value })
+                }
+                placeholder="e.g. Acme Inc"
+                className={inputClassName}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+              Location
+            </label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={(e) =>
+                setFormData({ ...formData, location: e.target.value })
+              }
+              placeholder="e.g. San Francisco, CA"
+              className={inputClassName}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+              Website
+            </label>
+            <input
+              type="text"
+              value={formData.website}
+              onChange={(e) =>
+                setFormData({ ...formData, website: e.target.value })
+              }
+              placeholder="e.g. example.com"
+              className={inputClassName}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="skills" className="pt-4">
+          <EditSkillsSection
+            skills={formData.skills}
+            onChange={(skills) => setFormData({ ...formData, skills })}
           />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-            Company
-          </label>
-          <input
-            type="text"
-            value={formData.company}
-            onChange={(e) =>
-              setFormData({ ...formData, company: e.target.value })
-            }
-            placeholder="e.g. Acme Inc"
-            className={inputClassName}
+        </TabsContent>
+
+        <TabsContent value="achievements" className="pt-4">
+          <EditAchievementsSection
+            achievements={formData.achievements}
+            onChange={(achievements) => setFormData({ ...formData, achievements })}
           />
-        </div>
-      </div>
+        </TabsContent>
 
-      <div>
-        <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-          Location
-        </label>
-        <input
-          type="text"
-          value={formData.location}
-          onChange={(e) =>
-            setFormData({ ...formData, location: e.target.value })
-          }
-          placeholder="e.g. San Francisco, CA"
-          className={inputClassName}
-        />
-      </div>
+        <TabsContent value="education" className="pt-4">
+          <EditEducationSection
+            education={formData.education}
+            onChange={(education) => setFormData({ ...formData, education })}
+          />
+        </TabsContent>
 
-      <div>
-        <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-          Website
-        </label>
-        <input
-          type="text"
-          value={formData.website}
-          onChange={(e) =>
-            setFormData({ ...formData, website: e.target.value })
-          }
-          placeholder="e.g. example.com"
-          className={inputClassName}
-        />
-      </div>
+        <TabsContent value="social" className="pt-4">
+          <EditSocialLinksSection
+            socialLinks={formData.social_links}
+            onChange={(social_links) => setFormData({ ...formData, social_links })}
+          />
+        </TabsContent>
+      </Tabs>
 
       <div className="flex gap-3 pt-2">
         <Button type="submit" className="flex-1">
@@ -286,7 +481,7 @@ export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  const handleSave = async (data: Parameters<typeof updateUser>[0]) => {
+  const handleSave = async (data: UserUpdate) => {
     setIsSaving(true)
     try {
       await updateUser(data)
@@ -318,9 +513,9 @@ export function ProfilePage() {
       <div className="border-b px-4 py-6">
         <div className="flex items-start gap-4">
           <Avatar className="size-20 ring-4 ring-primary/10">
-            <AvatarImage src={profileData.avatar} />
+            <AvatarImage src={""} />
             <AvatarFallback className="bg-primary text-2xl font-semibold text-primary-foreground">
-              {(user?.email || profileData.name)
+              {(user?.email || "User")
                 .split(" ")
                 .map((n) => n[0])
                 .join("")
@@ -331,18 +526,16 @@ export function ProfilePage() {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold">
-                {user?.full_name || user?.email?.split("@")[0] || profileData.name}
+                {user?.full_name || user?.email?.split("@")[0] || "User"}
               </h2>
-              {profileData.verified && (
-                <HugeiconsIcon
-                  icon={CheckmarkBadge02Icon}
-                  size={18}
-                  className="text-blue-500"
-                />
-              )}
+              <HugeiconsIcon
+                icon={CheckmarkBadge02Icon}
+                size={18}
+                className="text-blue-500"
+              />
             </div>
             <p className="text-sm text-muted-foreground">
-              {user?.email || profileData.handle}
+              {user?.email}
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
               <div className="flex items-center gap-1">
@@ -363,9 +556,9 @@ export function ProfilePage() {
 
         {/* Stats */}
         <div className="mt-6 flex justify-around">
-          <StatCard label="Matches" value={profileData.stats.matches} />
-          <StatCard label="Connections" value={profileData.stats.connections} />
-          <StatCard label="Profile Views" value={profileData.stats.views} />
+          <StatCard label="Matches" value={0} />
+          <StatCard label="Connections" value={0} />
+          <StatCard label="Profile Views" value={0} />
         </div>
 
         {/* Actions */}
@@ -382,17 +575,10 @@ export function ProfilePage() {
         </div>
 
         {/* Edit Form */}
-        {isEditing && (
+        {isEditing && user && (
           <div className="mt-6 rounded-lg border bg-muted/30 p-4">
             <EditProfileForm
-              initialData={{
-                full_name: user?.full_name,
-                bio: user?.bio || "",
-                location: user?.location || "",
-                website: user?.website || "",
-                role: user?.role || "",
-                company: user?.company || "",
-              }}
+              user={user}
               onSave={handleSave}
               onCancel={() => setIsEditing(false)}
             />
@@ -410,68 +596,59 @@ export function ProfilePage() {
       {/* Skills */}
       <div className="border-b px-4 py-4">
         <h3 className="mb-3 text-sm font-semibold">Skills</h3>
-        <div className="flex flex-wrap gap-2">
-          {profileData.skills.map((skill) => (
-            <SkillTag key={skill} skill={skill} />
-          ))}
-        </div>
+        {user?.skills && user.skills.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {user.skills.map((skill) => (
+              <SkillTag key={skill} skill={skill} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No skills added yet</p>
+        )}
       </div>
 
       {/* Achievements */}
       <div className="border-b px-4 py-4">
         <h3 className="mb-3 text-sm font-semibold">Achievements</h3>
-        <div className="flex flex-wrap gap-2">
-          {profileData.achievements.map((achievement) => (
-            <AchievementBadge key={achievement} achievement={achievement} />
-          ))}
-        </div>
-      </div>
-
-      {/* Experience */}
-      <div className="border-b px-4 py-4">
-        <h3 className="mb-3 text-sm font-semibold">Experience</h3>
-        <div className="space-y-3">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-              <HugeiconsIcon icon={Briefcase01Icon} size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium">{profileData.experience.role}</p>
-              <p className="text-xs text-muted-foreground">
-                {profileData.experience.company}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {profileData.experience.period}
-              </p>
-            </div>
+        {user?.achievements && user.achievements.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {user.achievements.map((achievement) => (
+              <AchievementBadge key={achievement} achievement={achievement} />
+            ))}
           </div>
-        </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No achievements added yet</p>
+        )}
       </div>
 
       {/* Education */}
       <div className="border-b px-4 py-4">
         <h3 className="mb-3 text-sm font-semibold">Education</h3>
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-            <HugeiconsIcon icon={Mortarboard01Icon} size={20} />
+        {user?.education ? (
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+              <HugeiconsIcon icon={Mortarboard01Icon} size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-medium">{user.education.school}</p>
+              <p className="text-xs text-muted-foreground">
+                {user.education.degree}
+              </p>
+              <p className="text-xs text-muted-foreground">{user.education.year}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium">{profileData.education.school}</p>
-            <p className="text-xs text-muted-foreground">
-              {profileData.education.degree}
-            </p>
-            <p className="text-xs text-muted-foreground">{profileData.education.year}</p>
-          </div>
-        </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No education added yet</p>
+        )}
       </div>
 
       {/* Social Links */}
       <div className="border-b px-4 py-4">
         <h3 className="mb-3 text-sm font-semibold">Social Links</h3>
         <div className="space-y-2">
-          {profileData.social.linkedin && (
+          {user?.social_links?.linkedin ? (
             <a
-              href={`https://${profileData.social.linkedin}`}
+              href={`https://${user.social_links.linkedin}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -480,10 +657,10 @@ export function ProfilePage() {
               <span>LinkedIn</span>
               <HugeiconsIcon icon={LinkSquare01Icon} size={12} className="ml-auto" />
             </a>
-          )}
-          {profileData.social.github && (
+          ) : null}
+          {user?.social_links?.github ? (
             <a
-              href={`https://${profileData.social.github}`}
+              href={`https://${user.social_links.github}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -492,10 +669,10 @@ export function ProfilePage() {
               <span>GitHub</span>
               <HugeiconsIcon icon={LinkSquare01Icon} size={12} className="ml-auto" />
             </a>
-          )}
-          {profileData.social.twitter && (
+          ) : null}
+          {user?.social_links?.twitter ? (
             <a
-              href={`https://${profileData.social.twitter}`}
+              href={`https://${user.social_links.twitter}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -504,7 +681,7 @@ export function ProfilePage() {
               <span>Twitter</span>
               <HugeiconsIcon icon={LinkSquare01Icon} size={12} className="ml-auto" />
             </a>
-          )}
+          ) : null}
           {user?.website ? (
             <a
               href={`https://${user.website}`}
@@ -516,11 +693,9 @@ export function ProfilePage() {
               <span>{user.website}</span>
               <HugeiconsIcon icon={LinkSquare01Icon} size={12} className="ml-auto" />
             </a>
-          ) : (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <HugeiconsIcon icon={Link01Icon} size={16} />
-              <span>N/A</span>
-            </div>
+          ) : null}
+          {!user?.social_links?.linkedin && !user?.social_links?.github && !user?.social_links?.twitter && !user?.website && (
+            <p className="text-sm text-muted-foreground">No social links added yet</p>
           )}
         </div>
       </div>
