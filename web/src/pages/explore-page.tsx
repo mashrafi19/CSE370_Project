@@ -3,7 +3,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   MoreHorizontalCircle01Icon,
   FavouriteIcon,
-  RepeatIcon,
   Image01Icon,
   Image02Icon,
   SentIcon,
@@ -76,7 +75,7 @@ function transformPost(post: Post): DisplayPost {
   }
 }
 
-function PostCard({ post }: { post: DisplayPost }) {
+function PostCard({ post, onLike }: { post: DisplayPost; onLike: (postId: number) => void }) {
   return (
     <div className="border-b bg-background">
       {/* Post Header */}
@@ -125,6 +124,7 @@ function PostCard({ post }: { post: DisplayPost }) {
       {/* Post Actions */}
       <div className="flex items-center gap-6 px-4 py-3">
         <button
+          onClick={() => onLike(post.id)}
           className={`flex items-center gap-1.5 transition-colors ${
             post.liked
               ? "text-red-500"
@@ -137,10 +137,6 @@ function PostCard({ post }: { post: DisplayPost }) {
             fill={post.liked ? "currentColor" : "none"}
           />
           <span className="text-sm font-medium">{post.likes}</span>
-        </button>
-        <button className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary">
-          <HugeiconsIcon icon={RepeatIcon} size={20} />
-          <span className="text-sm font-medium">{post.shares}</span>
         </button>
       </div>
     </div>
@@ -313,6 +309,20 @@ export function ExplorePage() {
     }
   }
 
+  const handleLike = (postId: number) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              liked: !post.liked,
+              likes: post.liked ? post.likes - 1 : post.likes + 1,
+            }
+          : post
+      )
+    )
+  }
+
   const userInitials = user?.full_name
     ? user.full_name
         .split(" ")
@@ -433,7 +443,7 @@ export function ExplorePage() {
             </p>
           </div>
         ) : (
-          posts.map((post) => <PostCard key={post.id} post={post} />)
+          posts.map((post) => <PostCard key={post.id} post={post} onLike={handleLike} />)
         )}
       </div>
 

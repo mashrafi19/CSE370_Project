@@ -437,10 +437,12 @@ function CompanyCard({
   company,
   onEdit,
   onDelete,
+  isInvestor = false,
 }: { 
   company: Company
   onEdit: () => void
   onDelete: () => void
+  isInvestor?: boolean
 }) {
   return (
     <div className="border-b px-4 py-6">
@@ -484,17 +486,28 @@ function CompanyCard({
         <StatCard label="Open Positions" value={0} />
       </div>
 
-      {/* Actions */}
-      <div className="mt-6 flex gap-3">
-        <Button className="flex-1" size="sm" onClick={onEdit}>
-          <HugeiconsIcon icon={Edit01Icon} size={16} />
-          Edit Company
-        </Button>
-        <Button variant="outline" className="flex-1" size="sm" onClick={onDelete}>
-          <HugeiconsIcon icon={Delete01Icon} size={16} />
-          Delete
-        </Button>
-      </div>
+      {/* Actions - Only show edit/delete for founders, not investors */}
+      {!isInvestor && (
+        <div className="mt-6 flex gap-3">
+          <Button className="flex-1" size="sm" onClick={onEdit}>
+            <HugeiconsIcon icon={Edit01Icon} size={16} />
+            Edit Company
+          </Button>
+          <Button variant="outline" className="flex-1" size="sm" onClick={onDelete}>
+            <HugeiconsIcon icon={Delete01Icon} size={16} />
+            Delete
+          </Button>
+        </div>
+      )}
+      
+      {/* Show investor badge if user is an investor */}
+      {isInvestor && (
+        <div className="mt-6 rounded-lg bg-green-50 border border-green-200 px-4 py-3">
+          <p className="text-sm text-green-700 text-center font-medium">
+            You are an investor in this company
+          </p>
+        </div>
+      )}
     </div>
   )
 }
@@ -617,14 +630,35 @@ export function CompanyPage() {
   const [showJobForm, setShowJobForm] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null)
+
+  // Check if current user is an investor in the selected company
+  const isInvestor = selectedCompany?.investors?.some(inv => inv.id === currentUserId) || false
+  // Check if current user is a founder
+  const isFounder = selectedCompany?.founders?.some(f => f.id === currentUserId) || false
 
   useEffect(() => {
     let cancelled = false
 
-    async function loadCompanies() {
+    async function loadData() {
       setIsLoading(true)
       setError(null)
       try {
+        // Fetch current user
+        const token = localStorage.getItem("token")
+        if (token) {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          if (response.ok) {
+            const user = await response.json()
+            if (!cancelled) {
+              setCurrentUserId(user.id)
+            }
+          }
+        }
+        
+        // Fetch companies
         const myCompanies = await companiesApi.getMyCompanies()
         if (!cancelled) {
           setCompanies(myCompanies)
@@ -633,7 +667,7 @@ export function CompanyPage() {
           }
         }
       } catch (err) {
-        console.error("Failed to load companies:", err)
+        console.error("Failed to load data:", err)
         if (!cancelled) {
           setError("Failed to load companies. Please try again.")
         }
@@ -644,7 +678,7 @@ export function CompanyPage() {
       }
     }
 
-    loadCompanies()
+    loadData()
 
     return () => {
       cancelled = true
@@ -833,6 +867,7 @@ export function CompanyPage() {
                 company={selectedCompany} 
                 onEdit={() => {}}
                 onDelete={() => handleDeleteCompany(selectedCompany.id)}
+                isInvestor={isInvestor && !isFounder}
               />
               <CompanyDetails company={selectedCompany} />
             </>

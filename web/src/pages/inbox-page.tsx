@@ -6,6 +6,7 @@ import {
   Building03Icon,
   Refresh01Icon,
   ArrowRight01Icon,
+  Chart01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -194,6 +195,61 @@ function InviteModal({
   )
 }
 
+function InvestModal({
+  isOpen,
+  onClose,
+  companies,
+  onInvest,
+  loading,
+}: {
+  isOpen: boolean
+  onClose: () => void
+  companies: Company[]
+  onInvest: (companyId: number) => void
+  loading: boolean
+}) {
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+        <h3 className="mb-4 text-lg font-semibold">Invest in Company</h3>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Select a company to invest in:
+        </p>
+        
+        {companies.length === 0 ? (
+          <p className="text-center text-muted-foreground">
+            No companies available for investment at this time.
+          </p>
+        ) : (
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {companies.map((company) => (
+              <button
+                key={company.id}
+                onClick={() => onInvest(company.id)}
+                disabled={loading}
+                className="w-full rounded-lg border p-3 text-left transition-colors hover:bg-muted"
+              >
+                <div className="font-medium">{company.name}</div>
+                <div className="text-xs text-muted-foreground">
+                  {company.founder_count} founders
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+        
+        <div className="mt-4 flex justify-end">
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ProfileDialog({
   isOpen,
   onClose,
@@ -347,6 +403,9 @@ function ChatView({
   const [showProfile, setShowProfile] = useState(false)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [profileLoading, setProfileLoading] = useState(false)
+  const [showInvestModal, setShowInvestModal] = useState(false)
+  const [investableCompanies, setInvestableCompanies] = useState<Company[]>([])
+  const [sendingInvestRequest, setSendingInvestRequest] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -552,6 +611,68 @@ function ChatView({
     }
   }
 
+  // Investment functions - fetch the OTHER user's companies (the person we're chatting with)
+  const fetchOtherUserCompanies = async () => {
+    try {
+      // Fetch companies where the other user (userId) is a founder
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/users/${userId}/companies`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      )
+      if (response.ok) {
+        const data = await response.json()
+        setInvestableCompanies(data)
+      }
+    } catch (error) {
+      console.error("Error fetching other user's companies:", error)
+    }
+  }
+
+  const sendInvestRequest = async (companyId: number) => {
+    setSendingInvestRequest(true)
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/investment-requests`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`,
+          },
+          body: JSON.stringify({
+            company_id: companyId,
+          }),
+        }
+      )
+
+      if (response.ok) {
+        // Send a message about the investment request
+        await fetch(`${import.meta.env.VITE_API_URL}/messages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`,
+          },
+          body: JSON.stringify({
+            receiver_id: userId,
+            content: `I'd like to invest in your company!`,
+          }),
+        })
+        
+        setShowInvestModal(false)
+        fetchMessages()
+      }
+    } catch (error) {
+      console.error("Error sending investment request:", error)
+    } finally {
+      setSendingInvestRequest(false)
+    }
+  }
+
   const isInvitationMessage = (content: string) => {
     return content.includes("I'd like to invite you to join as a cofounder!")
   }
@@ -559,6 +680,7 @@ function ChatView({
   useEffect(() => {
     fetchMessages()
     fetchInvitableCompanies()
+    fetchOtherUserCompanies()
     fetchPendingInvitations()
     const interval = setInterval(() => {
       fetchMessages()
@@ -711,16 +833,26 @@ function ChatView({
         )}
       </div>
 
-      {/* Bottom Section: Invite Button + Message Input */}
+      {/* Bottom Section: Invite/Invest Buttons + Message Input */}
       <div className="border-t bg-background">
-        {/* Invite to Company Button - Prominent but elegant */}
-        <div className="px-4 pt-3 pb-2">
+        {/* Action Buttons Row */}
+        <div className="px-4 pt-3 pb-2 flex gap-2">
+          {/* Invite to Company Button */}
           <button
             onClick={() => setShowInviteModal(true)}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border border-primary/20 px-4 py-3 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border border-primary/20 px-4 py-3 transition-colors"
           >
             <HugeiconsIcon icon={Building03Icon} size={18} className="text-primary" />
             <span className="text-sm font-medium text-primary">Invite to Company</span>
+          </button>
+          
+          {/* Invest Button */}
+          <button
+            onClick={() => setShowInvestModal(true)}
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-green-500/5 hover:bg-green-500/10 border border-green-500/20 px-4 py-3 transition-colors"
+          >
+            <HugeiconsIcon icon={Chart01Icon} size={18} className="text-green-600" />
+            <span className="text-sm font-medium text-green-600">Invest</span>
           </button>
         </div>
 
@@ -770,6 +902,15 @@ function ChatView({
         companies={invitableCompanies}
         onInvite={sendInvitation}
         loading={sendingInvite}
+      />
+
+      {/* Invest Modal */}
+      <InvestModal
+        isOpen={showInvestModal}
+        onClose={() => setShowInvestModal(false)}
+        companies={investableCompanies}
+        onInvest={sendInvestRequest}
+        loading={sendingInvestRequest}
       />
 
       {/* Profile Dialog */}
