@@ -21,6 +21,14 @@ company_founders = Table(
     Column('user_id', Integer, ForeignKey('users.id'), primary_key=True)
 )
 
+# Association table for company investors (many-to-many)
+company_investors = Table(
+    'company_investors',
+    Base.metadata,
+    Column('company_id', Integer, ForeignKey('companies.id'), primary_key=True),
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True)
+)
+
 class User(Base):
     __tablename__ = "users"
 
@@ -78,6 +86,8 @@ class Company(Base):
 
     # Many-to-many relationship with users (founders)
     founders = relationship("User", secondary=company_founders, backref="companies")
+    # Many-to-many relationship with users (investors)
+    investors = relationship("User", secondary=company_investors, backref="invested_companies")
     jobs = relationship("Job", back_populates="company", cascade="all, delete-orphan")
 
 
@@ -153,6 +163,23 @@ class CompanyInvitation(Base):
     company = relationship("Company")
     inviter = relationship("User", foreign_keys=[inviter_id])
     invitee = relationship("User", foreign_keys=[invitee_id])
+    message = relationship("Message")
+
+
+class InvestmentRequest(Base):
+    __tablename__ = "investment_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    investor_id = Column(Integer, ForeignKey("users.id"), nullable=False)  # The investor sending request
+    status = Column(String, default="pending")  # 'pending', 'accepted', 'rejected'
+    message_id = Column(Integer, ForeignKey("messages.id"), nullable=True)  # Associated message
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    company = relationship("Company")
+    investor = relationship("User", foreign_keys=[investor_id])
     message = relationship("Message")
 
 

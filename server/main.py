@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List
 import json
 
-from database import create_tables, get_db, User, Post, Company, Job, Swipe, Message, CompanyInvitation
+from database import create_tables, get_db, User, Post, Company, Job, Swipe, Message, CompanyInvitation, InvestmentRequest
 from auth import (
     verify_password,
     get_password_hash,
@@ -754,7 +754,7 @@ async def get_my_jobs(
 
 
 def serialize_company_response(company) -> dict:
-    """Serialize company with founders"""
+    """Serialize company with founders and investors"""
     return {
         "id": company.id,
         "name": company.name,
@@ -771,6 +771,10 @@ def serialize_company_response(company) -> dict:
         "founders": [
             {"id": f.id, "full_name": f.full_name, "email": f.email}
             for f in company.founders
+        ],
+        "investors": [
+            {"id": i.id, "full_name": i.full_name, "email": i.email}
+            for i in getattr(company, 'investors', [])
         ],
         "created_at": company.created_at,
         "updated_at": company.updated_at,
@@ -1212,42 +1216,6 @@ async def get_conversations(
     return conversations
 
 
-@app.get("/users/{user_id}", response_model=UserResponse)
-async def get_user(
-    user_id: int,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """Get user profile by ID (only if matched)"""
-    # Check if users are matched
-    match = (
-        db.query(Swipe)
-        .filter(
-            Swipe.swiper_id == current_user.id,
-            Swipe.swiped_id == user_id,
-            Swipe.swipe_type == "like",
-            Swipe.is_match == "matched",
-            Swipe.target_type == "user",
-        )
-        .first()
-    )
-    
-    if not match:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You can only view profiles of users you've matched with"
-        )
-    
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
-    
-    return serialize_user_response(user)
-
-
 @app.get("/messages/{user_id}", response_model=list[MessageResponse])
 async def get_messages(
     user_id: int,
@@ -1300,115 +1268,77 @@ async def get_messages(
     return messages[::-1]  # Return in chronological order
 
 
-@app.patch("/messages/{message_id}/read", status_code=status.HTTP_204_NO_CONTENT)
-async def mark_message_read(
-    message_id: int,
+@app.get("/users/{user_id}", response_model=UserResponse)
+async def get_user(
+    user_id: int,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Mark a specific message as read"""
-    message = db.query(Message).filter(Message.id == message_id).first()
-    if not message:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Message not found"
-        )
-    
-    if message.receiver_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You can only mark messages sent to you as read"
-        )
-    
-    message.is_read = 1
-    db.commit()
-    return None
-
-
-# Search endpoints for swipe interface
-@app.get("/search/cofounders", response_model=list[UserResponse])
-async def search_cofounders(
-    skip: int = 0,
-    limit: int = 20,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Get list of potential cofounders (users looking for cofounders)"""
-    # Get IDs of users already swiped by current user
-    swiped_ids_result = (
-        db.query(Swipe.swiped_id)
+    """Get user profile by ID (only if matched)"""
+    # Check if users are matched
+    match = (
+        db.query(Swipe)
         .filter(
             Swipe.swiper_id == current_user.id,
+            Swipe.swiped_id == user_id,
+            Swipe.swipe_type == "like",
+            Swipe.is_match == "matched",
             Swipe.target_type == "user",
         )
-        .all()
-    )
-    swiped_ids_list = [row[0] for row in swiped_ids_result]
-    
-    # Get users who have role indicating they're looking for cofounders
-    # Include all professional roles that might indicate interest in startups
-    # Exclude current user and already swiped users
-    cofounder_roles = [
-        "Looking for Cofounder", "Cofounder", "Founder",
-        "CEO", "CTO", "Technical Lead", "Software Engineer",
-        "Product Manager", "Designer", "Business Developer",
-        "Data Scientist", "Full-stack Developer", "UX Researcher"
-    ]
-    
-    query = db.query(User).filter(
-        User.id != current_user.id,
-        User.role.in_(cofounder_roles),
+        .first()
     )
     
-    if swiped_ids_list:
-        query = query.filter(~User.id.in_(swiped_ids_list))
+    if not match:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only view profiles of users you've matched with"
+        )
     
-    users = query.offset(skip).limit(limit).all()
-    return [serialize_user_response(user) for user in users]
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    return serialize_user_response(user)
 
 
-@app.get("/search/companies", response_model=list[CompanyResponse])
-async def search_companies(
-    skip: int = 0,
-    limit: int = 20,
+@app.get("/users/{user_id}/companies", response_model=list[CompanyResponse])
+async def get_user_companies(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
 ):
-    """Get list of companies for job seekers"""
-    # Get IDs of companies already swiped by current user
-    swiped_company_ids = (
-        db.query(Swipe.swiped_id)
+    """Get companies where a user is a founder (only if matched)"""
+    # Check if users are matched
+    match = (
+        db.query(Swipe)
         .filter(
             Swipe.swiper_id == current_user.id,
-            Swipe.target_type == "company",
+            Swipe.swiped_id == user_id,
+            Swipe.swipe_type == "like",
+            Swipe.is_match == "matched",
+            Swipe.target_type == "user",
         )
-        .subquery()
+        .first()
     )
     
-    # Get companies with open jobs - use subquery to handle pagination correctly
-    from sqlalchemy import func
-    
-    # First get company IDs that have open jobs and haven't been swiped
-    company_ids_query = (
-        db.query(Company.id)
-        .join(Job, Company.id == Job.company_id)
-        .filter(
-            Job.status == "open",
-            ~Company.id.in_(swiped_company_ids),
+    if not match:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only view companies of users you've matched with"
         )
-        .distinct()
-        .subquery()
-    )
     
-    # Then fetch those companies with proper pagination
-    companies = (
-        db.query(Company)
-        .join(company_ids_query, Company.id == company_ids_query.c.id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
-    return [serialize_company_response(company) for company in companies]
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Return companies where this user is a founder
+    return [serialize_company_response(company) for company in user.companies]
 
 
 # Company Invitation schemas
@@ -1568,6 +1498,13 @@ async def accept_invitation(
             detail="Company already has maximum 5 founders"
         )
     
+    # Check if user is already an investor in this company
+    if current_user in invitation.company.investors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You are already an investor in this company. Cannot join as cofounder."
+        )
+    
     # Add user as founder
     invitation.company.founders.append(current_user)
     invitation.status = "accepted"
@@ -1604,6 +1541,304 @@ async def ignore_invitation(
     db.commit()
     
     return {"message": "Invitation ignored"}
+
+
+# Investment Request schemas
+class InvestmentRequestCreate(BaseModel):
+    company_id: int
+
+
+class InvestmentRequestResponse(BaseModel):
+    id: int
+    company_id: int
+    company_name: str
+    investor_id: int
+    investor_name: str
+    status: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+# Investment Request endpoints
+@app.post("/investment-requests", response_model=InvestmentRequestResponse)
+async def send_investment_request(
+    request_data: InvestmentRequestCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Send investment request to a company"""
+    # Check if company exists
+    company = db.query(Company).filter(Company.id == request_data.company_id).first()
+    if not company:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company not found"
+        )
+    
+    # Check if user is already a founder or investor
+    if current_user in company.founders:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You are already a founder of this company"
+        )
+    
+    if current_user in company.investors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You are already an investor in this company"
+        )
+    
+    # Check for existing pending request
+    existing = db.query(InvestmentRequest).filter(
+        InvestmentRequest.company_id == request_data.company_id,
+        InvestmentRequest.investor_id == current_user.id,
+        InvestmentRequest.status == "pending"
+    ).first()
+    
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Investment request already pending"
+        )
+    
+    # Create investment request
+    request = InvestmentRequest(
+        company_id=request_data.company_id,
+        investor_id=current_user.id,
+        status="pending"
+    )
+    db.add(request)
+    db.commit()
+    db.refresh(request)
+    
+    return {
+        "id": request.id,
+        "company_id": company.id,
+        "company_name": company.name,
+        "investor_id": current_user.id,
+        "investor_name": current_user.full_name or current_user.email,
+        "status": request.status,
+        "created_at": request.created_at
+    }
+
+
+@app.get("/investment-requests/pending", response_model=list[InvestmentRequestResponse])
+async def get_pending_investment_requests(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Get pending investment requests for companies where user is founder"""
+    # Get all companies where current user is founder
+    companies = current_user.companies
+    company_ids = [c.id for c in companies]
+    
+    if not company_ids:
+        return []
+    
+    requests = db.query(InvestmentRequest).filter(
+        InvestmentRequest.company_id.in_(company_ids),
+        InvestmentRequest.status == "pending"
+    ).all()
+    
+    result = []
+    for req in requests:
+        result.append({
+            "id": req.id,
+            "company_id": req.company_id,
+            "company_name": req.company.name,
+            "investor_id": req.investor_id,
+            "investor_name": req.investor.full_name or req.investor.email,
+            "status": req.status,
+            "created_at": req.created_at
+        })
+    
+    return result
+
+
+@app.get("/investment-requests/my", response_model=list[InvestmentRequestResponse])
+async def get_my_investment_requests(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Get investment requests sent by current user"""
+    requests = db.query(InvestmentRequest).filter(
+        InvestmentRequest.investor_id == current_user.id
+    ).all()
+    
+    result = []
+    for req in requests:
+        result.append({
+            "id": req.id,
+            "company_id": req.company_id,
+            "company_name": req.company.name,
+            "investor_id": req.investor_id,
+            "investor_name": req.investor.full_name or req.investor.email,
+            "status": req.status,
+            "created_at": req.created_at
+        })
+    
+    return result
+
+
+@app.post("/investment-requests/{request_id}/accept")
+async def accept_investment_request(
+    request_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Accept an investment request (founders only)"""
+    request = db.query(InvestmentRequest).filter(
+        InvestmentRequest.id == request_id
+    ).first()
+    
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Investment request not found"
+        )
+    
+    # Check if current user is a founder of the company
+    if current_user not in request.company.founders:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only founders can accept investment requests"
+        )
+    
+    if request.status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Request is not pending"
+        )
+    
+    # Check if investor is already a founder in this company
+    if request.investor in request.company.founders:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This user is already a founder of the company. Cannot add as investor."
+        )
+    
+    # Add user as investor
+    request.company.investors.append(request.investor)
+    request.status = "accepted"
+    db.commit()
+    
+    return {"message": "Investment request accepted successfully"}
+
+
+@app.post("/investment-requests/{request_id}/reject")
+async def reject_investment_request(
+    request_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Reject an investment request (founders only)"""
+    request = db.query(InvestmentRequest).filter(
+        InvestmentRequest.id == request_id
+    ).first()
+    
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Investment request not found"
+        )
+    
+    # Check if current user is a founder of the company
+    if current_user not in request.company.founders:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only founders can reject investment requests"
+        )
+    
+    if request.status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Request is not pending"
+        )
+    
+    request.status = "rejected"
+    db.commit()
+    
+    return {"message": "Investment request rejected"}
+
+
+# Search endpoints for swipe interface
+@app.get("/search/cofounders", response_model=list[UserResponse])
+async def search_cofounders(
+    skip: int = 0,
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get list of potential cofounders (users looking for cofounders)"""
+    # Get IDs of users already swiped by current user
+    swiped_ids = (
+        db.query(Swipe.swiped_id)
+        .filter(
+            Swipe.swiper_id == current_user.id,
+            Swipe.target_type == "user",
+        )
+        .subquery()
+    )
+    
+    # Get users who have role indicating they're looking for cofounders
+    # Exclude current user and already swiped users
+    users = (
+        db.query(User)
+        .filter(
+            User.id != current_user.id,
+            User.role.in_(["Looking for Cofounder", "Cofounder", "Founder"]),
+            ~User.id.in_(swiped_ids),
+        )
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    return [serialize_user_response(user) for user in users]
+
+
+@app.get("/search/companies", response_model=list[CompanyResponse])
+async def search_companies(
+    skip: int = 0,
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get list of companies for job seekers"""
+    # Get IDs of companies already swiped by current user
+    swiped_company_ids = (
+        db.query(Swipe.swiped_id)
+        .filter(
+            Swipe.swiper_id == current_user.id,
+            Swipe.target_type == "company",
+        )
+        .subquery()
+    )
+    
+    # Get companies with open jobs - use subquery to handle pagination correctly
+    from sqlalchemy import func
+    
+    # First get company IDs that have open jobs and haven't been swiped
+    company_ids_query = (
+        db.query(Company.id)
+        .join(Job, Company.id == Job.company_id)
+        .filter(
+            Job.status == "open",
+            ~Company.id.in_(swiped_company_ids),
+        )
+        .distinct()
+        .subquery()
+    )
+    
+    # Then fetch those companies with proper pagination
+    companies = (
+        db.query(Company)
+        .join(company_ids_query, Company.id == company_ids_query.c.id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    return [serialize_company_response(company) for company in companies]
 
 
 # Public endpoints

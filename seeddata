@@ -1,0 +1,385 @@
+$ cd /Users/imtiaz/Desktop/tingeworks/CSE370_Project/server && source /Users/imtiaz/Desktop/tingeworks/CSE370_Project/venv/bin/activate && python seed.py --bulk --force
+🌱 Starting database seeding...
+  Created user: Daniel Rodriguez (daniel.rodriguez835@example.com)
+  Created user: Casey Singh (casey.singh755@example.com)
+  Created user: Daniel Brown (daniel.brown320@example.com)
+  Created user: Olivia Smith (olivia.smith874@example.com)
+  Created user: Dakota Shah (dakota.shah357@example.com)
+  Created user: Emily Park (emily.park965@example.com)
+  Created user: Michael Kim (michael.kim956@example.com)
+  Created user: Peyton Brown (peyton.brown153@example.com)
+  Created user: Benjamin Park (benjamin.park559@example.com)
+  Created user: Quinn Smith (quinn.smith374@example.com)
+  Created user: Benjamin Anderson (benjamin.anderson141@example.com)
+  Created user: David Gupta (david.gupta341@example.com)
+  Created user: Jessica Hernandez (jessica.hernandez33@example.com)
+  Created user: William Anderson (william.anderson303@example.com)
+  Created user: Quinn Kumar (quinn.kumar363@example.com)
+  Created user: Sophia Chen (sophia.chen692@example.com)
+  Created user: David Singh (david.singh434@example.com)
+  Created user: Morgan Williams (morgan.williams419@example.com)
+  Created user: Michael Martinez (michael.martinez695@example.com)
+  Created user: Rowan Rodriguez (rowan.rodriguez761@example.com)
+  Created user: Sarah Gonzalez (sarah.gonzalez261@example.com)
+  Created user: Sophia Shah (sophia.shah505@example.com)
+  Created user: Daniel Kim (daniel.kim869@example.com)
+  Created user: Morgan Williams (morgan.williams373@example.com)
+  Created user: Morgan Martinez (morgan.martinez832@example.com)
+  Created user: Rowan Kim (rowan.kim620@example.com)
+  Created user: Benjamin Davis (benjamin.davis25@example.com)
+  Created user: Avery Hernandez (avery.hernandez604@example.com)
+  Created user: Lucas Lopez (lucas.lopez353@example.com)
+  Created user: Isabella Gupta (isabella.gupta986@example.com)
+  Created user: Jordan Miller (jordan.miller667@example.com)
+  Created user: Sarah Lopez (sarah.lopez9@example.com)
+  Created user: Morgan Gupta (morgan.gupta77@example.com)
+  Created user: Sawyer Johnson (sawyer.johnson802@example.com)
+  Created user: Casey Gonzalez (casey.gonzalez425@example.com)
+  Created user: Rowan Gupta (rowan.gupta571@example.com)
+  Created user: Rowan Lopez (rowan.lopez354@example.com)
+  Created user: Michael Smith (michael.smith601@example.com)
+  Created user: Daniel Jones (daniel.jones399@example.com)
+  Created user: Alex Anderson (alex.anderson765@example.com)
+  Created user: Jessica Park (jessica.park553@example.com)
+  Created user: Dakota Kumar (dakota.kumar485@example.com)
+  Created user: Olivia Smith (olivia.smith55@example.com)
+  Created user: Sarah Martinez (sarah.martinez428@example.com)
+  Created user: Hayden Davis (hayden.davis403@example.com)
+  Created user: Dakota Davis (dakota.davis61@example.com)
+  Created user: Emily Shah (emily.shah870@example.com)
+  Created user: Olivia Davis (olivia.davis953@example.com)
+  Created user: Finley Singh (finley.singh746@example.com)
+  Created user: Hayden Hernandez (hayden.hernandez326@example.com)
+  Created user: Sawyer Singh (sawyer.singh519@example.com)
+  Created user: Dakota Johnson (dakota.johnson988@example.com)
+  Created user: Reese Smith (reese.smith794@example.com)
+  Created user: Emily Garcia (emily.garcia132@example.com)
+  Created user: Emily Rodriguez (emily.rodriguez953@example.com)
+  Created user: David Chen (david.chen127@example.com)
+  Created user: William Rodriguez (william.rodriguez819@example.com)
+  Created user: Quinn Davis (quinn.davis131@example.com)
+  Created user: Olivia Miller (olivia.miller183@example.com)
+  Created user: Dakota Rodriguez (dakota.rodriguez113@example.com)
+  Created user: Emerson Johnson (emerson.johnson952@example.com)
+  Created user: James Rodriguez (james.rodriguez779@example.com)
+  Created user: Daniel Gupta (daniel.gupta609@example.com)
+  Created user: Rowan Patel (rowan.patel975@example.com)
+  Created user: Riley Anderson (riley.anderson304@example.com)
+  Created user: Riley Kim (riley.kim297@example.com)
+  Created user: Emma Lopez (emma.lopez155@example.com)
+  Created user: Rowan Gupta (rowan.gupta423@example.com)
+  Created user: Benjamin Gonzalez (benjamin.gonzalez797@example.com)
+  Created user: James Garcia (james.garcia610@example.com)
+  Created user: Jessica Rodriguez (jessica.rodriguez44@example.com)
+  Created user: Emily Lopez (emily.lopez489@example.com)
+  Created user: Quinn Brown (quinn.brown441@example.com)
+  Created user: Finley Smith (finley.smith409@example.com)
+  Created user: Dakota Davis (dakota.davis388@example.com)
+  Created user: Quinn Park (quinn.park521@example.com)
+  Created user: Michael Brown (michael.brown652@example.com)
+  Created user: Michael Garcia (michael.garcia519@example.com)
+  Created user: Jordan Martinez (jordan.martinez954@example.com)
+  Created user: Isabella Garcia (isabella.garcia349@example.com)
+  Created user: Sarah Singh (sarah.singh755@example.com)
+  Created user: Dakota Lopez (dakota.lopez100@example.com)
+  Created user: Hayden Gupta (hayden.gupta47@example.com)
+  Created user: Hayden Gonzalez (hayden.gonzalez817@example.com)
+  Created user: Quinn Shah (quinn.shah867@example.com)
+  Created user: Isabella Anderson (isabella.anderson492@example.com)
+  Created user: David Singh (david.singh700@example.com)
+  Created user: Benjamin Wilson (benjamin.wilson627@example.com)
+  Created user: David Wilson (david.wilson646@example.com)
+  Created user: Sawyer Shah (sawyer.shah716@example.com)
+  Created user: Taylor Garcia (taylor.garcia233@example.com)
+  Created user: Rowan Martinez (rowan.martinez680@example.com)
+  Created user: Quinn Jones (quinn.jones379@example.com)
+  Created user: Alex Brown (alex.brown470@example.com)
+  Created user: Quinn Brown (quinn.brown434@example.com)
+  Created user: Emerson Jones (emerson.jones118@example.com)
+  Created user: Daniel Jones (daniel.jones365@example.com)
+  Created user: Finley Davis (finley.davis355@example.com)
+  Created user: Sophia Singh (sophia.singh398@example.com)
+  Created user: Alex Smith (alex.smith757@example.com)
+  Created user: Quinn Kim (quinn.kim215@example.com)
+  Created user: Dakota Williams (dakota.williams507@example.com)
+  Created user: Quinn Williams (quinn.williams312@example.com)
+  Created user: Sarah Patel (sarah.patel295@example.com)
+  Created user: Emma Gupta (emma.gupta218@example.com)
+  Created user: Sophia Jones (sophia.jones891@example.com)
+  Created user: Sarah Shah (sarah.shah235@example.com)
+  Created user: Benjamin Martinez (benjamin.martinez752@example.com)
+  Created user: Casey Lopez (casey.lopez501@example.com)
+  Created user: Hayden Gupta (hayden.gupta351@example.com)
+  Created user: Taylor Kim (taylor.kim814@example.com)
+  Created user: Rowan Smith (rowan.smith991@example.com)
+  Created user: Isabella Williams (isabella.williams539@example.com)
+  Created user: Lucas Kim (lucas.kim590@example.com)
+  Created user: Hayden Garcia (hayden.garcia563@example.com)
+  Created user: Reese Lopez (reese.lopez189@example.com)
+  Created user: Quinn Miller (quinn.miller81@example.com)
+  Created user: Sarah Miller (sarah.miller72@example.com)
+  Created user: Taylor Wilson (taylor.wilson456@example.com)
+  Created user: Daniel Gonzalez (daniel.gonzalez321@example.com)
+  Created user: Sophia Jones (sophia.jones623@example.com)
+  Created user: Avery Anderson (avery.anderson439@example.com)
+  Created user: Sawyer Kumar (sawyer.kumar4@example.com)
+  Created user: Emerson Garcia (emerson.garcia883@example.com)
+  Created user: Peyton Wilson (peyton.wilson925@example.com)
+  Created user: Alex Kumar (alex.kumar469@example.com)
+  Created user: Emerson Chen (emerson.chen550@example.com)
+  Created user: Emma Wilson (emma.wilson68@example.com)
+  Created user: Dakota Chen (dakota.chen57@example.com)
+  Created user: Jessica Davis (jessica.davis717@example.com)
+  Created user: Peyton Gonzalez (peyton.gonzalez339@example.com)
+  Created user: David Patel (david.patel234@example.com)
+  Created user: Olivia Lopez (olivia.lopez467@example.com)
+  Created user: Riley Chen (riley.chen381@example.com)
+  Created user: Emerson Rodriguez (emerson.rodriguez252@example.com)
+  Created user: Olivia Johnson (olivia.johnson992@example.com)
+  Created user: Benjamin Johnson (benjamin.johnson839@example.com)
+  Created user: Daniel Williams (daniel.williams366@example.com)
+  Created user: Rowan Gonzalez (rowan.gonzalez165@example.com)
+  Created user: Finley Singh (finley.singh541@example.com)
+  Created user: Lucas Brown (lucas.brown80@example.com)
+  Created user: Casey Kumar (casey.kumar838@example.com)
+  Created user: Jessica Hernandez (jessica.hernandez757@example.com)
+  Created user: Daniel Martinez (daniel.martinez459@example.com)
+  Created user: Quinn Williams (quinn.williams214@example.com)
+  Created user: Emily Rodriguez (emily.rodriguez534@example.com)
+  Created user: Alex Davis (alex.davis567@example.com)
+  Created user: James Miller (james.miller257@example.com)
+  Created user: Emerson Gupta (emerson.gupta910@example.com)
+  Created user: Rowan Brown (rowan.brown653@example.com)
+✅ Seeded 150 users successfully
+  Created company: Quantum Leap Labs (Founders: Benjamin Martinez)
+  Created company: CloudNine Tech (Founders: Casey Singh, Dakota Chen)
+  Created company: Synergy Systems Labs (Founders: Morgan Williams, Isabella Gupta)
+  Created company: NextGen Labs Labs (Founders: Jessica Hernandez, Michael Brown, Sarah Patel)
+  Created company: CloudNine Co (Founders: Benjamin Wilson)
+  Created company: TechStart Tech (Founders: Jessica Hernandez)
+  Created company: Pixel Perfect Inc (Founders: Sophia Jones, Peyton Brown)
+  Created company: GreenTech Solutions Labs (Founders: Benjamin Gonzalez, Benjamin Wilson)
+  Created company: CodeCraft AI (Founders: Riley Anderson)
+  Created company: Quantum Leap Labs (Founders: Emerson Jones)
+  Created company: AI Innovations Labs (Founders: Casey Gonzalez)
+  Created company: Pixel Perfect Labs (Founders: Emma Lopez)
+  Created company: ByteBuilders AI (Founders: Emerson Garcia, David Singh, Dakota Davis)
+  Created company: CodeCraft AI (Founders: Hayden Garcia)
+  Created company: Spark Studios Co (Founders: Taylor Wilson, Benjamin Anderson)
+  Created company: CloudNine Labs (Founders: David Singh, Quinn Kumar)
+  Created company: DataFlow Inc (Founders: Emma Gupta, Jessica Rodriguez)
+  Created company: DataFlow AI (Founders: Emerson Rodriguez, Sophia Chen, Jordan Miller)
+  Created company: GreenTech Solutions Labs (Founders: Riley Anderson, Quinn Shah)
+  Created company: AI Innovations Inc (Founders: Olivia Miller, Morgan Martinez, Benjamin Park)
+  Created company: Digital Forge AI (Founders: Hayden Gupta, Reese Lopez, Emerson Gupta)
+  Created company: Future Foundry Tech (Founders: Rowan Kim, Emerson Jones, James Garcia)
+  Created company: DataFlow AI (Founders: Riley Kim, Emma Lopez, Alex Davis)
+  Created company: NextGen Labs Co (Founders: Lucas Lopez, Emily Garcia, Casey Kumar)
+  Created company: Synergy Systems AI (Founders: Sarah Patel, Dakota Davis, William Rodriguez)
+  Created company: CloudNine Labs (Founders: Finley Singh, Emily Garcia)
+  Created company: Digital Forge Co (Founders: Peyton Brown, Sophia Jones, Sarah Miller)
+  Created company: Quantum Leap AI (Founders: Alex Davis, Michael Brown, Daniel Martinez)
+  Created company: DataFlow AI (Founders: Hayden Hernandez)
+  Created company: AI Innovations Labs (Founders: Peyton Brown, James Rodriguez, Finley Singh)
+  Created company: Pixel Perfect Inc (Founders: Quinn Williams)
+  Created company: Synergy Systems Inc (Founders: Emily Garcia, Michael Garcia)
+  Created company: NextGen Labs Labs (Founders: Emma Lopez)
+  Created company: Synergy Systems Labs (Founders: Hayden Hernandez, Dakota Johnson)
+  Created company: Innovate Inc AI (Founders: Sophia Shah, Quinn Brown)
+  Created company: Quantum Leap Labs (Founders: Jordan Miller, Dakota Davis)
+  Created company: AI Innovations Co (Founders: James Miller, Rowan Gonzalez)
+  Created company: DataFlow Co (Founders: Taylor Garcia)
+  Created company: ByteBuilders AI (Founders: Dakota Kumar, Dakota Lopez)
+  Created company: ByteBuilders Co (Founders: Dakota Chen)
+  Created company: CloudNine Labs (Founders: Finley Singh, Michael Brown)
+  Created company: Synergy Systems Inc (Founders: Finley Davis)
+  Created company: Synergy Systems Inc (Founders: Alex Kumar)
+  Created company: Spark Studios Inc (Founders: David Wilson, Alex Anderson, Hayden Hernandez)
+  Created company: Spark Studios Co (Founders: Quinn Miller)
+  Created company: NextGen Labs Inc (Founders: Daniel Brown, Michael Brown, Quinn Miller)
+  Created company: NextGen Labs Labs (Founders: Quinn Kumar, Sawyer Singh, Daniel Kim)
+  Created company: CodeCraft AI (Founders: Sawyer Johnson, David Wilson)
+  Created company: Innovate Inc Inc (Founders: Quinn Williams)
+  Created company: AI Innovations AI (Founders: Taylor Kim, Jessica Park)
+  Created company: CloudNine Inc (Founders: Sophia Jones, Quinn Jones, Taylor Wilson)
+  Created company: TechStart Inc (Founders: Hayden Hernandez, Olivia Smith, David Gupta)
+  Created company: CloudNine AI (Founders: Olivia Davis, Reese Lopez)
+  Created company: Synergy Systems Co (Founders: Casey Gonzalez, Daniel Brown)
+  Created company: Spark Studios Labs (Founders: Hayden Gonzalez, Sawyer Kumar)
+  Created company: NextGen Labs AI (Founders: Morgan Williams, Quinn Shah)
+  Created company: TechStart Tech (Founders: Michael Kim, Rowan Lopez, Dakota Johnson)
+  Created company: Innovate Inc Labs (Founders: James Garcia)
+  Created company: Pixel Perfect Inc (Founders: Quinn Brown, Olivia Davis)
+  Created company: GreenTech Solutions Tech (Founders: Emily Rodriguez)
+  Created company: ByteBuilders Tech (Founders: Dakota Williams)
+  Created company: DataFlow AI (Founders: James Rodriguez)
+  Created company: AI Innovations Co (Founders: Morgan Gupta)
+  Created company: Future Foundry Inc (Founders: Dakota Lopez, Jessica Park)
+  Created company: DataFlow Co (Founders: Jessica Hernandez, Emily Rodriguez, Benjamin Johnson)
+  Created company: CodeCraft AI (Founders: Finley Singh)
+  Created company: ByteBuilders Inc (Founders: Jessica Hernandez)
+  Created company: Pixel Perfect Inc (Founders: Jordan Miller, David Wilson, Reese Lopez)
+  Created company: Synergy Systems Tech (Founders: James Miller, David Chen)
+  Created company: Synergy Systems Co (Founders: Alex Brown, Sophia Jones, Casey Singh)
+  Created company: Synergy Systems Inc (Founders: Hayden Davis, Quinn Kim, Sawyer Shah)
+  Created company: Synergy Systems Co (Founders: Casey Lopez, Emily Shah)
+  Created company: Digital Forge Labs (Founders: James Miller)
+  Created company: CodeCraft Inc (Founders: Jessica Rodriguez, Benjamin Davis)
+  Created company: GreenTech Solutions Inc (Founders: Quinn Kumar, Quinn Smith)
+✅ Seeded 75 companies successfully
+  Created job: Full-stack Developer at Future Foundry Tech
+  Created job: Full-stack Developer at Pixel Perfect Inc
+  Created job: Technical Lead at CloudNine Labs
+  Created job: UI/UX Designer at AI Innovations Labs
+  Created job: Mobile Developer at CloudNine Tech
+  Created job: Backend Developer at TechStart Inc
+  Created job: Growth Marketer at Synergy Systems Inc
+  Created job: Backend Developer at Quantum Leap Labs
+  Created job: Data Scientist at TechStart Tech
+  Created job: Full-stack Developer at CodeCraft AI
+  Created job: CTO at Synergy Systems Inc
+  Created job: Customer Success Manager at ByteBuilders Tech
+  Created job: UI/UX Designer at DataFlow Co
+  Created job: Growth Marketer at DataFlow AI
+  Created job: Mobile Developer at NextGen Labs AI
+  Created job: Mobile Developer at AI Innovations AI
+  Created job: Growth Marketer at Digital Forge Co
+  Created job: Growth Marketer at DataFlow AI
+  Created job: Product Manager at CodeCraft Inc
+  Created job: DevOps Engineer at Digital Forge AI
+  Created job: Frontend Developer at AI Innovations Labs
+  Created job: Backend Developer at CloudNine Co
+  Created job: Customer Success Manager at Synergy Systems Labs
+  Created job: UI/UX Designer at CodeCraft AI
+  Created job: Sales Lead at GreenTech Solutions Labs
+  Created job: Software Engineer at GreenTech Solutions Inc
+  Created job: Data Scientist at AI Innovations Co
+  Created job: Frontend Developer at Innovate Inc AI
+  Created job: CTO at Synergy Systems AI
+  Created job: CTO at ByteBuilders AI
+  Created job: Technical Lead at GreenTech Solutions Inc
+  Created job: Software Engineer at Pixel Perfect Inc
+  Created job: Customer Success Manager at Pixel Perfect Labs
+  Created job: CTO at ByteBuilders AI
+  Created job: Product Manager at Pixel Perfect Inc
+  Created job: CTO at CloudNine Labs
+  Created job: Growth Marketer at DataFlow AI
+  Created job: Growth Marketer at CloudNine Tech
+  Created job: Data Scientist at Innovate Inc AI
+  Created job: Customer Success Manager at DataFlow AI
+  Created job: Product Manager at DataFlow Co
+  Created job: Backend Developer at DataFlow AI
+  Created job: Product Manager at Quantum Leap Labs
+  Created job: Sales Lead at CodeCraft AI
+  Created job: Software Engineer at DataFlow AI
+  Created job: Customer Success Manager at AI Innovations Inc
+  Created job: Data Scientist at AI Innovations Co
+  Created job: Growth Marketer at Innovate Inc Inc
+  Created job: Sales Lead at Synergy Systems Inc
+  Created job: Backend Developer at NextGen Labs Labs
+  Created job: Technical Lead at ByteBuilders Inc
+  Created job: Data Scientist at Synergy Systems Co
+  Created job: Backend Developer at CloudNine Co
+  Created job: Growth Marketer at ByteBuilders AI
+  Created job: Product Manager at Pixel Perfect Labs
+  Created job: Machine Learning Engineer at Synergy Systems Labs
+  Created job: Data Scientist at Digital Forge AI
+  Created job: Software Engineer at GreenTech Solutions Tech
+  Created job: DevOps Engineer at AI Innovations Inc
+  Created job: Backend Developer at Synergy Systems Tech
+  Created job: UI/UX Designer at ByteBuilders AI
+  Created job: Sales Lead at AI Innovations Inc
+  Created job: Data Scientist at Synergy Systems Co
+  Created job: Customer Success Manager at Synergy Systems AI
+  Created job: CTO at Synergy Systems Labs
+  Created job: DevOps Engineer at Pixel Perfect Labs
+  Created job: Data Scientist at DataFlow AI
+  Created job: Data Scientist at CloudNine Co
+  Created job: Growth Marketer at Pixel Perfect Labs
+  Created job: Data Scientist at CloudNine Labs
+  Created job: Backend Developer at Synergy Systems AI
+  Created job: DevOps Engineer at Synergy Systems Tech
+  Created job: Software Engineer at DataFlow Inc
+  Created job: UI/UX Designer at Synergy Systems AI
+  Created job: Software Engineer at Synergy Systems Tech
+  Created job: Software Engineer at Quantum Leap Labs
+  Created job: DevOps Engineer at CodeCraft AI
+  Created job: Full-stack Developer at NextGen Labs Labs
+  Created job: CTO at Spark Studios Co
+  Created job: Growth Marketer at Future Foundry Tech
+  Created job: UI/UX Designer at Quantum Leap Labs
+  Created job: Full-stack Developer at Digital Forge Labs
+  Created job: Software Engineer at Spark Studios Co
+  Created job: DevOps Engineer at Pixel Perfect Labs
+  Created job: Machine Learning Engineer at AI Innovations Co
+  Created job: Machine Learning Engineer at Synergy Systems Labs
+  Created job: Full-stack Developer at CloudNine Labs
+  Created job: Machine Learning Engineer at DataFlow Inc
+  Created job: CTO at ByteBuilders AI
+  Created job: Full-stack Developer at NextGen Labs Inc
+  Created job: Data Scientist at ByteBuilders Tech
+  Created job: Product Manager at AI Innovations Labs
+  Created job: Software Engineer at AI Innovations Inc
+  Created job: Customer Success Manager at CodeCraft AI
+  Created job: Product Manager at CodeCraft AI
+  Created job: DevOps Engineer at CloudNine Labs
+  Created job: Product Manager at TechStart Inc
+  Created job: Data Scientist at CodeCraft AI
+  Created job: Customer Success Manager at DataFlow AI
+  Created job: Data Scientist at Digital Forge Labs
+  Created job: CTO at GreenTech Solutions Labs
+  Created job: Backend Developer at Innovate Inc Labs
+  Created job: Software Engineer at CloudNine Co
+  Created job: Software Engineer at Digital Forge Co
+  Created job: DevOps Engineer at AI Innovations Labs
+  Created job: Growth Marketer at Spark Studios Co
+  Created job: UI/UX Designer at GreenTech Solutions Labs
+  Created job: CTO at DataFlow Co
+  Created job: Growth Marketer at Spark Studios Co
+  Created job: Customer Success Manager at GreenTech Solutions Labs
+  Created job: Product Manager at DataFlow Co
+  Created job: Sales Lead at CodeCraft AI
+  Created job: Growth Marketer at NextGen Labs Labs
+  Created job: Customer Success Manager at Spark Studios Co
+  Created job: Frontend Developer at Spark Studios Co
+  Created job: Growth Marketer at CodeCraft AI
+  Created job: Sales Lead at NextGen Labs Labs
+  Created job: Frontend Developer at ByteBuilders Inc
+  Created job: Technical Lead at Synergy Systems Tech
+  Created job: Software Engineer at NextGen Labs Co
+  Created job: Data Scientist at CodeCraft Inc
+  Created job: Customer Success Manager at Synergy Systems Co
+  Created job: Growth Marketer at Synergy Systems AI
+  Created job: DevOps Engineer at DataFlow AI
+  Created job: Backend Developer at Future Foundry Tech
+  Created job: CTO at NextGen Labs AI
+  Created job: DevOps Engineer at AI Innovations AI
+  Created job: Full-stack Developer at Synergy Systems Co
+  Created job: DevOps Engineer at Digital Forge AI
+  Created job: Growth Marketer at Quantum Leap Labs
+  Created job: Full-stack Developer at Pixel Perfect Inc
+  Created job: Data Scientist at GreenTech Solutions Labs
+  Created job: UI/UX Designer at Synergy Systems Tech
+  Created job: UI/UX Designer at GreenTech Solutions Inc
+  Created job: Machine Learning Engineer at Synergy Systems Inc
+  Created job: Growth Marketer at DataFlow AI
+  Created job: Sales Lead at Spark Studios Co
+  Created job: Technical Lead at Synergy Systems Labs
+  Created job: Sales Lead at DataFlow Inc
+  Created job: Mobile Developer at Digital Forge Labs
+  Created job: Frontend Developer at Future Foundry Inc
+  Created job: Technical Lead at Future Foundry Inc
+  Created job: Machine Learning Engineer at Quantum Leap Labs
+  Created job: Mobile Developer at CodeCraft AI
+  Created job: DevOps Engineer at Quantum Leap AI
+  Created job: Customer Success Manager at Quantum Leap Labs
+  Created job: Technical Lead at Pixel Perfect Labs
+  Created job: Machine Learning Engineer at Innovate Inc Inc
+  Created job: Frontend Developer at Pixel Perfect Inc
+  Created job: CTO at GreenTech Solutions Labs
+✅ Seeded 150 jobs successfully
+🎉 Database seeding completed successfully!
+Summary:
+  ✅ 150 users created
+  ✅ 75 companies created
+  ✅ 150 jobs created
